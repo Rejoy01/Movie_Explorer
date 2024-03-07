@@ -2,11 +2,11 @@ const  SearchEL = document.getElementById("search");
 const formEL = document.getElementById("form");
 const imagePath = "https://image.tmdb.org/t/p/w1280"
 const MoviesContainer = document.querySelector(".movies-details");
-
-
+const paginationsContainer = document.querySelector('.paginations');
+const listItems = paginationsContainer.querySelectorAll('ul li');
 //fc95b085c87b910a96dbb74ba609c600
 //https://api.themoviedb.org/3/collection/collection_id/images/api_key=fc95b085c87b910a96dbb74ba609c600
-const MoviesAPI = "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.des&api_key=fc95b085c87b910a96dbb74ba609c600"
+const MoviesAPI = "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.des&api_key=fc95b085c87b910a96dbb74ba609c600&page="
 
 getMovies(MoviesAPI)
 
@@ -24,7 +24,8 @@ async function getMovies(url){
 //display movie inside html
 function showMovies(movies){
     MoviesContainer.innerHTML = " ";
-    movies.slice(0,9).forEach((movie)=>{
+    const length = movies.length
+    movies.slice(0,12).forEach((movie)=>{
         const {title,release_date,poster_path,vote_average} = movie
         const MoviesDisplay = document.createElement('div');
         MoviesDisplay.classList.add('movies');
@@ -39,3 +40,13 @@ function showMovies(movies){
         MoviesContainer.appendChild(MoviesDisplay)
     })
 }
+
+
+//pagination
+listItems.forEach((pages,index)=>{
+    pages.addEventListener('click',()=>{
+        if(getMovies){
+            getMovies(MoviesAPI+index)
+        }
+    })
+})
