@@ -355,3 +355,9 @@ button{
 .paginations ul li:hover{
     transform: scale(1.2);
 }
+
+
+
+.hidden {
+    display: none;
+}
