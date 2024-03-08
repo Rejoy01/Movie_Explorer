@@ -25,7 +25,8 @@
         </nav>
       </div>
     </div>
-    <header>
+    
+    <!-- <header>
       <div class="slider-container">
         <div
           class="slide active"
@@ -58,13 +59,6 @@
             </button>
           </div>
         </div>
-        <!-- <div
-          class="slide"
-          style="background-image: url('./img/img2.jpg')"
-        ></div>
-        <div class="slide" style="background-image: url('/img/img3.jpg')"></div>
-        <div class="slide" style="background-image: url('/img/img4.jpg')"></div> -->
-
         <button class="arrow left-arrow" id="left">
           <i class="fas fa-arrow-left"></i>
         </button>
@@ -72,7 +66,7 @@
           <i class="fas fa-arrow-right"></i>
         </button>
       </div>
-    </header>
+    </header> -->
     <div class="movies-content" id="movies">
       <div class="container">
         <h2 class="label">What's Popular</h2>
@@ -91,13 +85,40 @@
         </div>
       </div>
     </div>
+    <section id="movieDetails" class="hidden ">
+      <div class="AboutMovie">
+
+        <h2 id="detailTitle"></h2>
+        <p id="releaseDate"></p>
+        <div class="imageTrailer">
+          <div id="detailPoster"></div>
+
+          <div id="trailer-container" class="trailer"></div>
+        </div>
+
+        <div class="genere">
+          <p id="genre">drama</p>
+          <p id="detailRating"></p>
+        </div>
+        <div class="movieDetailContainer">
+          <p id="overview"></p>
+          <p id="detail"></p>
+          <p id="lang"></p>
+          <p id="detailOverview"></p>
+        </div>
+
+        <button id="backButton" class="Backbtn">Back to Movie List</button>
+      </div>
+        
+          
+        </section>
 
     <script
       src="https://kit.fontawesome.com/d5a4d70f34.js"
       crossorigin="anonymous"
     ></script>
 
-    <div class="container">
+    <div class="container" id="footer">
       <div class="paginations">
         <ul>
           <li>previous</li>
@@ -112,6 +133,7 @@
         </ul>
       </div>
     </div>
+    
     <script src="./index.js"></script>
     <script src="./main.js"></script>
   </body>
