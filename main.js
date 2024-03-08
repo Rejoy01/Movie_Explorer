@@ -9,6 +9,45 @@ const listItems = paginationsContainer.querySelectorAll('ul li');
 const MoviesAPI = "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.des&api_key=fc95b085c87b910a96dbb74ba609c600&page="
 
 const searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=fc95b085c87b910a96dbb74ba609c600&query="
+
+
+
+
+function fetchMovieTrailer(movieId) {
+    const apiKey = 'fc95b085c87b910a96dbb74ba609c600'; 
+    const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Assuming the first video returned is the trailer
+            const trailerKey = data.results[0].key;
+            displayTrailer(trailerKey);
+        })
+        .catch(error => console.error('Error fetching trailer:', error));
+}
+
+// Function to display the trailer on the page
+function displayTrailer(trailerKey) {
+    const trailerContainer = document.getElementById('trailer-container');
+    trailerContainer.innerHTML = `
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/${trailerKey}" frameborder="0" allowfullscreen></iframe>
+    `;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//fetch movies
 getMovies(MoviesAPI)
 
 async function getMovies(url){
@@ -38,8 +77,10 @@ function showMovies(movies){
           <p class="year">Date : ${release_date}</p>
           <p class="rating">Rating : ${vote_average}</p>
         </div>`
+        MoviesDisplay.addEventListener('click', ()=>{showMovieDetails(movie)})
         MoviesContainer.appendChild(MoviesDisplay)
-        showMovieDetails(movie)
+
+        // showMovieDetails(movie)
     })
 }
 
@@ -50,6 +91,9 @@ formEL.addEventListener('submit',(e)=>{
     
     if(searchTerm ){
         getMovies(searchUrl+searchTerm)
+        document.getElementById('movies').classList.remove('hidden');
+        document.getElementById('footer').classList.remove('hidden');
+        document.getElementById('movieDetails').classList.add('hidden');
     }else{
         window.location.reload();
         
@@ -70,19 +114,24 @@ listItems.forEach((pages,index)=>{
 
 function showMovieDetails(movie) {
     console.log(movie);
-    // document.getElementById('detailTitle').textContent = movie.title;
-    // document.getElementById('detailPoster').innerHTML = `<img src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="${movie.title}">`; // Line 3
+    document.getElementById('detailTitle').textContent = movie.title;
+    document.getElementById('detailPoster').innerHTML = `<img class="MovieImg"src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="${movie.title}">`; // Line 3
 
-    // document.getElementById('detailRating').textContent = movie.vote_average; 
-    // document.getElementById('overview').textContent = movie.overview; 
-    // document.getElementById('releaseDate').textContent = movie.release_date; 
+    fetchMovieTrailer(movie.id);
+    document.getElementById('detailRating').textContent = `Rating : ${movie.vote_average}`; 
+    document.getElementById('genre').textContent = `Rating : ${movie.vote_average}`; 
+    document.getElementById('overview').textContent = movie.overview; 
+    document.getElementById('releaseDate').textContent =`Release date : ${movie.release_date}`; 
     
-    // document.getElementById('movies').classList.add('hidden');
-    // document.getElementById('movieDetails').classList.remove('hidden'); 
+    document.getElementById('movies').classList.add('hidden');
+    document.getElementById('footer').classList.add('hidden');
+    document.getElementById('movieDetails').classList.remove('hidden'); 
 
  
-    // document.getElementById('backButton').addEventListener('click', () => { 
-    //     document.getElementById('movies').classList.remove('hidden');
-    //     document.getElementById('movieDetails').classList.add('hidden');
-    // });
+    document.getElementById('backButton').addEventListener('click', () => {
+        console.log(); 
+        document.getElementById('movies').classList.remove('hidden');
+        document.getElementById('footer').classList.remove('hidden');
+        document.getElementById('movieDetails').classList.add('hidden');
+    });
 }
