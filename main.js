@@ -10,11 +10,38 @@ const MoviesAPI = "https://api.themoviedb.org/3/discover/movie?sort_by=popularit
 
 const searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=fc95b085c87b910a96dbb74ba609c600&query="
 
+const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYzk1YjA4NWM4N2I5MTBhOTZkYmI3NGJhNjA5YzYwMCIsInN1YiI6IjY1ZTZjMGRhOGQxYjhlMDE2MzY2ZDBlZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.nubfsmdkVnpIrodIFatI9C6dUsqO4F5xvZxvs4FHexY'
+    }
+  };
 
+
+
+
+function fetchCredits(moiveId){
+   
+    const url = `https://api.themoviedb.org/3/movie/${moiveId}/credits?language=en-US`
+
+    fetch(url,options)
+    .then(response => response.json())
+    .then(data =>{
+        const cast = data.cast;
+        const crew = data.crew;
+        displayCrewAndCrew(cast,crew)
+
+    })
+    .catch(error => console.error('Error fetching movie credits :',error   ));
+
+}
 
 
 function fetchMovieTrailer(movieId) {
-    const apiKey = 'fc95b085c87b910a96dbb74ba609c600'; 
+
+    const apiKey = 'fc95b085c87b910a96dbb74ba609c600';
+
     const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`;
 
     fetch(url)
@@ -27,23 +54,64 @@ function fetchMovieTrailer(movieId) {
         .catch(error => console.error('Error fetching trailer:', error));
 }
 
-// Function to display the trailer on the page
+
+
+
+function fetchDetails(movieId){
+    
+    
+    const url = `https://api.themoviedb.org/3/movie/${movieId}?language=en-US`
+    
+    fetch(url,options)
+    .then(response => response.json())
+    .then(data =>{
+        const DetailData = data.genres[0].name
+        displayDetails(DetailData)
+    }).catch(error => console.error('Error fetching Details',error))
+    
+}
+
+
+function displayCrewAndCrew(cast,crew){
+    console.log(cast);
+    const Director = document.getElementById("Director")
+    const Writers = document.getElementById("writers")
+    const StarsEle = document.getElementById("stars")
+    cast.slice(0,3).forEach(member  =>{
+        const listItem = document.createElement("li")
+        listItem.classList.add("List")
+        listItem.textContent =` ${member.name}`
+        StarsEle.appendChild(listItem)
+    })
+    crew.filter(member=> member.department == "Writing").slice(0,3).forEach(member =>{
+        const writersList = document.createElement("li")
+        writersList.classList.add("List")
+        writersList.textContent = `${member.name}`
+        Writers.appendChild(writersList)
+    })
+    crew.filter(member=> member.job === "Director").forEach(director => {
+        const Directors = document.createElement("li")
+        Directors.classList.add("List")
+        Directors.textContent = `${director.name} `
+        Director.appendChild(Directors)
+    })
+    
+}
+
+function displayDetails(genre){
+    console.log(genre)
+    document.getElementById('genre').textContent =`${genre}`
+}
+
+
+
+
 function displayTrailer(trailerKey) {
     const trailerContainer = document.getElementById('trailer-container');
     trailerContainer.innerHTML = `
         <iframe width="560" height="315" src="https://www.youtube.com/embed/${trailerKey}" frameborder="0" allowfullscreen></iframe>
     `;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -75,7 +143,7 @@ function showMovies(movies){
         </p>
         <div class="short-des">
           <p class="year">Date : ${release_date}</p>
-          <p class="rating">Rating : ${vote_average}</p>
+          <p class="rating">Rating : ${vote_average.toFixed(1)}</p>
         </div>`
         MoviesDisplay.addEventListener('click', ()=>{showMovieDetails(movie)})
         MoviesContainer.appendChild(MoviesDisplay)
@@ -99,7 +167,7 @@ formEL.addEventListener('submit',(e)=>{
         
     }
 })
-
+//693134
 //pagination
 listItems.forEach((pages,index)=>{
     pages.addEventListener('click',()=>{
@@ -114,12 +182,13 @@ listItems.forEach((pages,index)=>{
 
 function showMovieDetails(movie) {
     console.log(movie);
+    fetchDetails(movie.id)
+    fetchMovieTrailer(movie.id);
+    fetchCredits(movie.id)
     document.getElementById('detailTitle').textContent = movie.title;
     document.getElementById('detailPoster').innerHTML = `<img class="MovieImg"src="https://image.tmdb.org/t/p/w500/${movie.poster_path}" alt="${movie.title}">`; // Line 3
-
-    fetchMovieTrailer(movie.id);
-    document.getElementById('detailRating').textContent = `Rating : ${movie.vote_average}`; 
-    document.getElementById('genre').textContent = `Rating : ${movie.vote_average}`; 
+    document.getElementById('detailRating').textContent = `Rating : ${movie.vote_average.toFixed(1)}`; 
+    // document.getElementById('genre').textContent = `${movie.genre_ids}`; 
     document.getElementById('overview').textContent = movie.overview; 
     document.getElementById('releaseDate').textContent =`Release date : ${movie.release_date}`; 
     

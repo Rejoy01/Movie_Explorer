@@ -394,8 +394,8 @@ button{
 }
 
 .MovieImg{
-    width: 300px; /* Adjust this value to your desired size */
-    height: 400px; /* Adjust this value to your desired size */
+    width: 300px; 
+    height: 400px; 
     object-fit: cover;
 }
 
@@ -433,6 +433,40 @@ button{
 
 #detailTitle{
     color: var(--white-color);
+}
+
+#Director{
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+#stars{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+#writers{
+    flex-wrap: wrap;
+    display: flex;
+    justify-content:flex-start;
+    gap: 1rem;
+}
+
+.List{
+    list-style: none;
+}
+
+.cast{
+    width: 100%;
+}
+
+.horizontal-line{
+    border-top: 1px solid var(--white-color); 
+    margin: 10px 0; 
+    width: 100%;
 }
 
 .movieDetailContainer .overview{
