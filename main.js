@@ -2,6 +2,7 @@ const  SearchEL = document.getElementById("Search");
 const formEL = document.getElementById("form");
 const imagePath = "https://image.tmdb.org/t/p/w1280"
 const MoviesContainer = document.querySelector(".movies-details");
+const RecommendedMoviesContainer = document.querySelector(".Recommended-movies");
 const paginationsContainer = document.querySelector('.paginations');
 const listItems = paginationsContainer.querySelectorAll('ul li');
 //fc95b085c87b910a96dbb74ba609c600
@@ -72,8 +73,20 @@ function fetchDetails(movieId){
 }
 
 
+function fetchRecommendations(movieId){
+    const url = `https://api.themoviedb.org/3/movie/${movieId}/recommendations?language=en-US&page=1`
+    fetch(url, options)
+    .then(response => response.json())
+    .then(data =>{
+        RecommendedMovies(data.results)
+    })
+    .catch(err => console.error("Error fetching recommendations", err))
+}
+
+
+
 function displayCrewAndCrew(cast,crew){
-    console.log(cast);
+    // console.log(cast);
     const Director = document.getElementById("Director")
     const Writers = document.getElementById("writers")
     const StarsEle = document.getElementById("stars")
@@ -89,7 +102,7 @@ function displayCrewAndCrew(cast,crew){
         writersList.textContent = `${member.name}`
         Writers.appendChild(writersList)
     })
-    crew.filter(member=> member.job === "Director").forEach(director => {
+    crew.filter(member=> member.job === "Director").slice(0,1).forEach(director => {
         const Directors = document.createElement("li")
         Directors.classList.add("List")
         Directors.textContent = `${director.name} `
@@ -97,6 +110,7 @@ function displayCrewAndCrew(cast,crew){
     })
     
 }
+
 
 function displayDetails(genre){
     console.log(genre)
@@ -123,11 +137,12 @@ async function getMovies(url){
         const result = await fetch(url)
         const data = await result.json()
         showMovies(data.results)
-        console.log(data);
+        // console.log(data);
     } catch (error) {
         console.log(error);
     }
 }
+
 
 //display movie inside html
 function showMovies(movies){
@@ -181,7 +196,8 @@ listItems.forEach((pages,index)=>{
 })
 
 function showMovieDetails(movie) {
-    console.log(movie);
+    // console.log(movie);
+    fetchRecommendations(movie.id)
     fetchDetails(movie.id)
     fetchMovieTrailer(movie.id);
     fetchCredits(movie.id)
@@ -193,6 +209,7 @@ function showMovieDetails(movie) {
     document.getElementById('releaseDate').textContent =`Release date : ${movie.release_date}`; 
     
     document.getElementById('movies').classList.add('hidden');
+    document.querySelector('header').classList.add('hidden');
     document.getElementById('footer').classList.add('hidden');
     document.getElementById('movieDetails').classList.remove('hidden'); 
 
@@ -200,7 +217,46 @@ function showMovieDetails(movie) {
     document.getElementById('backButton').addEventListener('click', () => {
         console.log(); 
         document.getElementById('movies').classList.remove('hidden');
+        document.querySelector('header').classList.remove('hidden');
         document.getElementById('footer').classList.remove('hidden');
         document.getElementById('movieDetails').classList.add('hidden');
     });
 }
+
+
+function RecommendedMovies(movies){
+    // console.log(movies);
+    RecommendedMoviesContainer.innerHTML = " ";
+    const length = movies.length
+    movies.slice(0,3).forEach((movie)=>{
+        const {title,release_date,poster_path,vote_average} = movie
+        const MoviesDisplay = document.createElement('div');
+        MoviesDisplay.classList.add('movies');
+        MoviesDisplay.innerHTML=`<img src="${imagePath+poster_path}" alt="">
+        <p class="movies-title">
+          ${title}
+        </p>
+        <div class="short-des">
+          <p class="year">Date : ${release_date}</p>
+          <p class="rating">Rating : ${vote_average.toFixed(1)}</p>
+        </div>`
+        MoviesDisplay.addEventListener('click', ()=>{showMovieDetails(movie)})
+        RecommendedMoviesContainer.appendChild(MoviesDisplay)
+
+        // showMovieDetails(movie)
+    })
+}
+
+function isFavorite(movieId){
+    let Favorite = json.parse(localStorage.getItem('favorite')) || [];
+    const index = Favorite.indexOf(movieId);
+    if (index == -1) {
+        Favorite.push(movieId)
+    }else{
+        Favorite.splice(index, 1)
+    }
+    localStorage.setItem('favorite', JSON.stringify(Favorite))
+}
+
+f
+

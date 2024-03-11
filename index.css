@@ -34,7 +34,7 @@ nav li{
     list-style: none;
 }
 .menus{
-   /* position: fixed; */
+   position: fixed;
    top: 0;
    width: 100%;
    z-index: 1;
@@ -135,7 +135,19 @@ header::before{
     /* border: 3px solid #ddd; */
     border-radius: 5px;
 }
+.movies-titles{
+    padding: 0rem 20rem;
+   
+}
 
+.release-date{
+    padding: 0rem 20rem;
+    color: var(--light-gray-color);
+}
+.Rating{
+    padding: 0rem 20rem;
+    color: rgb(218, 206, 39);
+}
 .slide{
     opacity: 0;
     height: 100vh;
@@ -153,7 +165,7 @@ header::before{
 
 .slide.active{
     opacity: 1;
-    transform: translateX(-0%);
+    transform: translateX(-15%);
 }
 
 .arrow{
@@ -489,6 +501,7 @@ button{
     gap: 12px;
     border-radius: 8px;
     cursor: pointer;
+
 }
 
 
@@ -507,8 +520,34 @@ button{
     pointer-events: none;
     transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+
+  .Recommended-movies{
+    display: flex;
+    justify-content: space-around;
+    width: auto;
+    flex-wrap: wrap;
+    row-gap: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .Recommend-container{
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 1rem;
+
+  }
+
+.movies-contents{
+    flex-wrap: wrap;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    
+}
   
-  .Backbtn::after {
+.Backbtn::after {
     content: "";
     z-index: -1;
     position: absolute;
