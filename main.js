@@ -21,6 +21,20 @@ const options = {
   };
 
 
+  const fetchMoviesByGenre = async (genreId) => {
+    try {
+        const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch movies by genre');
+        }
+        const data = await response.json();
+        return data.results;
+    } catch (error) {
+        console.error('Error fetching movies by genre:', error);
+        return []; // Return empty array in case of error
+    }
+}
 
 
 function fetchCredits(moiveId){
@@ -380,3 +394,92 @@ function RecommendedMovies(movies){
 }
 
 
+async function fetchRelatedMoviesByGenre(genreId) {
+    const apiKey = 'fc95b085c87b910a96dbb74ba609c600';
+    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&with_genres=${genreId}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data.results);
+        return data.results;
+    } catch (error) {
+        console.log("error in fetching moives related to genre",error);
+    }
+}
+
+
+
+async function fetchGenreList() {
+    const apiKey = 'fc95b085c87b910a96dbb74ba609c600';
+    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch genre list');
+        }
+        const data = await response.json();
+        return data.genres;
+    } catch (error) {
+        console.error('Error fetching genre list:', error);
+        return []; // Return empty array in case of error
+    }
+}
+
+// Call the function to fetch genre list
+fetchGenreList()
+    .then(genres => {
+        console.log('Genre list:', genres);
+        // Iterate over the genres and log their IDs
+        genres.forEach(genre => {
+            console.log(`Genre: ${genre.name}, ID: ${genre.id}`);
+        });
+    })
+    .catch(error => console.error('Error:', error));
+
+//filters
+    // document.getElementById('Action').addEventListener('click', async () => {
+    //     try {
+    //         const actionGenreId = 28; // Assuming 28 is the genre ID for Action
+    //         const actionMovies = await fetchRelatedMoviesByGenre(actionGenreId);
+    //         showMovies(actionMovies)
+    //         // console.log('Action Movies:', actionMovies);
+    //         // Display action movies or do something else with the data
+    //     } catch (error) {
+    //         console.error('Error fetching action movies:', error);
+    //     }
+    // });
+    // document.getElementById('Comedy').addEventListener('click', async () => {
+    //     try {
+    //         const actionGenreId = 35; // Assuming 28 is the genre ID for Action
+    //         const actionMovies = await fetchRelatedMoviesByGenre(actionGenreId);
+    //         showMovies(actionMovies)
+    //         // console.log('Action Movies:', actionMovies);
+    //         // Display action movies or do something else with the data
+    //     } catch (error) {
+    //         console.error('Error fetching action movies:', error);
+    //     }
+    // });
+    // document.getElementById('Drama').addEventListener('click', async () => {
+    //     try {
+    //         const actionGenreId = 18; // Assuming 28 is the genre ID for Action
+    //         const actionMovies = await fetchRelatedMoviesByGenre(actionGenreId);
+    //         showMovies(actionMovies)
+    //         // console.log('Action Movies:', actionMovies);
+    //         // Display action movies or do something else with the data
+    //     } catch (error) {
+    //         console.error('Error fetching action movies:', error);
+    //     }
+    // });
+    // document.getElementById('Horror').addEventListener('click', async () => {
+    //     try {
+    //         const actionGenreId = 27; // Assuming 28 is the genre ID for Action
+    //         const actionMovies = await fetchRelatedMoviesByGenre(actionGenreId);
+    //         showMovies(actionMovies)
+    //         // console.log('Action Movies:', actionMovies);
+    //         // Display action movies or do something else with the data
+    //     } catch (error) {
+    //         console.error('Error fetching action movies:', error);
+    //     }
+    // });
+
+    const genre
