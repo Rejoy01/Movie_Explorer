@@ -5,6 +5,7 @@ const MoviesContainer = document.querySelector(".movies-details");
 const RecommendedMoviesContainer = document.querySelector(".Recommended-movies");
 const paginationsContainer = document.querySelector('.paginations');
 const listItems = paginationsContainer.querySelectorAll('ul li');
+const button = document.querySelector('.Fav');
 //fc95b085c87b910a96dbb74ba609c600
 //https://api.themoviedb.org/3/collection/collection_id/images/api_key=fc95b085c87b910a96dbb74ba609c600
 const MoviesAPI = "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.des&api_key=fc95b085c87b910a96dbb74ba609c600&page="
@@ -132,24 +133,138 @@ function displayTrailer(trailerKey) {
 //fetch movies
 getMovies(MoviesAPI)
 
+var IsFav = false
+
+function toggleBoolean() {
+    IsFav = !IsFav; 
+    getMovies(MoviesAPI)
+}
+
+// Get the button element
+
+
+// Add event listener to the button
+button.addEventListener('click', () => {
+    toggleBoolean(); 
+    // console.log('Boolean value:', IsFav); 
+});
+
 async function getMovies(url){
     try {
         const result = await fetch(url)
         const data = await result.json()
-        showMovies(data.results)
-        // console.log(data);
+
+        IsFav ?  showFavoriteMovies() : showMovies(data.results)
+
     } catch (error) {
         console.log(error);
     }
 }
 
+function toggleFavorite(movieId){
+    let Favorite = JSON.parse(localStorage.getItem('favorite')) || [];
+    const index = Favorite.indexOf(movieId);
+    if (index == -1) {
+        Favorite.push(movieId)
+    }else{
+        Favorite.splice(index, 1)
+    }
+    localStorage.setItem('favorite', JSON.stringify(Favorite))
+}
+
+function isFavorite(movieId) {
+    let favourites = JSON.parse(localStorage.getItem('favorite')) || [];
+    return favourites.includes(String(movieId))
+}
+
+
+
+
+
+
+
+
+
+
+function showFavoriteMovies() {
+    let favorites = JSON.parse(localStorage.getItem('favorite')) || [];
+    const apiKey = 'fc95b085c87b910a96dbb74ba609c600';
+    console.log(favorites);
+    // Fetch all favorite movies
+    const fetchFavoriteMovies = async () => {
+        const favoriteMovies = [];
+        for (const favoriteId of favorites) {
+            const favoriteIdInt = parseInt(favoriteId, 10);
+            const url = `https://api.themoviedb.org/3/movie/${favoriteIdInt}?api_key=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch favorite movie');
+                }
+                const data = await response.json();
+                favoriteMovies.push(data);
+            } catch (error) {
+                console.error('Error fetching favorite movie:', error);
+            }
+        }
+        return favoriteMovies;
+    };
+
+    // Display favorite movies
+    fetchFavoriteMovies().then(favoriteMovies => {
+        console.log(favoriteMovies);
+        
+        
+        MoviesContainer.innerHTML = " ";
+        favoriteMovies.forEach(movie => {
+            const { title, release_date, poster_path, vote_average, id } = movie;
+            const MoviesDisplay = document.createElement('div');
+            MoviesDisplay.classList.add('movies');
+            MoviesDisplay.innerHTML = `
+                <img src="${imagePath + poster_path}" alt="">
+                <p class="movies-title">${title}</p>
+                <div class="short-des">
+                    <p class="year">Date : ${release_date}</p>
+                    <p class="rating">Rating : ${vote_average.toFixed(1)}</p>
+                    <button class="favorite-button" data-movie-id="${id}">
+                        Remove from Favorites
+                    </button>
+                </div>
+            `;
+            MoviesDisplay.addEventListener('click', () => { showMovieDetails(movie); });
+            MoviesContainer.appendChild(MoviesDisplay);
+
+            // Event listener for favorite button
+            const favoriteButton = MoviesDisplay.querySelector('.favorite-button')
+            favoriteButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const movieId = event.target.dataset.movieId;
+                console.log('Movie ID:', movieId);
+
+                toggleFavorite(movieId);
+                MoviesContainer.removeChild(MoviesDisplay); 
+            });
+        });
+    });
+}
+
+
+
+
+
+
+
 
 //display movie inside html
 function showMovies(movies){
+    
     MoviesContainer.innerHTML = " ";
     const length = movies.length
+    
+    
     movies.slice(0,12).forEach((movie)=>{
-        const {title,release_date,poster_path,vote_average} = movie
+        
+        const {title,release_date,poster_path,vote_average,id} = movie
         const MoviesDisplay = document.createElement('div');
         MoviesDisplay.classList.add('movies');
         MoviesDisplay.innerHTML=`<img src="${imagePath+poster_path}" alt="">
@@ -159,10 +274,22 @@ function showMovies(movies){
         <div class="short-des">
           <p class="year">Date : ${release_date}</p>
           <p class="rating">Rating : ${vote_average.toFixed(1)}</p>
+          <button class="favorite-button" data-movie-id="${id}">
+                ${isFavorite(id) ? 'Remove from Favorites' : 'Add to Favorites'}
+            </button>
         </div>`
         MoviesDisplay.addEventListener('click', ()=>{showMovieDetails(movie)})
         MoviesContainer.appendChild(MoviesDisplay)
 
+        const favoriteButton = MoviesDisplay.querySelector('.favorite-button')
+        favoriteButton.addEventListener('click',(event)=>{
+            event.stopPropagation();
+            const movieId = event.target.dataset.movieId;
+            console.log('Movie ID:', movieId);
+
+            toggleFavorite(movieId);
+            event.target.textContent = isFavorite(movieId) ? 'Remove from Favorites' : 'Add to Favorites';
+        })
         // showMovieDetails(movie)
     })
 }
@@ -182,6 +309,10 @@ formEL.addEventListener('submit',(e)=>{
         
     }
 })
+
+
+
+
 //693134
 //pagination
 listItems.forEach((pages,index)=>{
@@ -239,6 +370,7 @@ function RecommendedMovies(movies){
         <div class="short-des">
           <p class="year">Date : ${release_date}</p>
           <p class="rating">Rating : ${vote_average.toFixed(1)}</p>
+          
         </div>`
         MoviesDisplay.addEventListener('click', ()=>{showMovieDetails(movie)})
         RecommendedMoviesContainer.appendChild(MoviesDisplay)
@@ -247,16 +379,4 @@ function RecommendedMovies(movies){
     })
 }
 
-function isFavorite(movieId){
-    let Favorite = json.parse(localStorage.getItem('favorite')) || [];
-    const index = Favorite.indexOf(movieId);
-    if (index == -1) {
-        Favorite.push(movieId)
-    }else{
-        Favorite.splice(index, 1)
-    }
-    localStorage.setItem('favorite', JSON.stringify(Favorite))
-}
-
-f
 
