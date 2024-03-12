@@ -349,19 +349,25 @@ button{
 }
 
 
+.Pagination-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
 .paginations{
     padding: 4rem 0;
-
 }
 
 .paginations  ul{
     display: flex;
+    flex-wrap: wrap;
     list-style-type: none;
 }
 
 .paginations ul li{
-    margin: 0 0.7rem;
+   
     box-shadow: 0 0 10px var(--secondary-color);
     padding: 0.7rem 1.5rem;
     cursor: pointer;
@@ -625,11 +631,17 @@ button{
   }
   
 
-
+  .containers .btn{
+    font-size: 7px;
+  }
 
   .containers {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  align-items: center;
+  overflow: hidden;
 }
 
 .radio-wrapper {
